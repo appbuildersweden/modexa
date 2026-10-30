@@ -1,0 +1,16 @@
+# secrets
+.env
+.env.local
+.tauri/modexa.key
+
+# dependencies & build output
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/
+
+# local artifacts
+.freebuff/
+*.local
+/*.png
+/*.jpg

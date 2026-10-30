@@ -1,0 +1,61 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Modexa",
+  "version": "0.1.0",
+  "identifier": "com.modexa.app",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:4317",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Modexa",
+        "width": 1440,
+        "height": 920,
+        "minWidth": 980,
+        "minHeight": 640,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "dmg", "appimage", "deb"],
+    "createUpdaterArtifacts": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "DeveloperTool",
+    "shortDescription": "Modexa desktop workspace",
+    "longDescription": "Modexa desktop AI agent workspace",
+    "publisher": "Modexa",
+    "copyright": "Copyright 2026 Modexa",
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://github.com/appbuildersweden/modexa/releases/latest/download/latest.json"
+      ],
+      "dialog": false,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJGNzIxOEMxQ0I2NDZDREEKUldUYWJHVEx3Umh5djYrMXpySXF6SFZyWmNqQUFTb2lxeFo5YWlqdmkxRUxaejFUWHFzMHNuTVAK"
+    }
+  }
+}
