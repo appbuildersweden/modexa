@@ -1049,7 +1049,10 @@ el.cloudSignOutBtn.addEventListener("click", async () => {
 });
 
 /* ---------------- updates ---------------- */
-const APP_VERSION = document.querySelector('meta[name="modexa-version"]')?.content || "0.1.0";
+const APP_VERSION =
+  typeof __APP_VERSION__ !== "undefined"
+    ? __APP_VERSION__
+    : document.querySelector('meta[name="modexa-version"]')?.content || "0.0.0";
 let checkingUpdates = false;
 
 function showUpdateStatus(text, available = false) {
