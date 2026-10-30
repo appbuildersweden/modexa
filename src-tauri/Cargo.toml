@@ -1,6 +1,6 @@
 [package]
 name = "modexa"
-version = "0.1.0"
+version = "0.2.0"
 description = "Modexa – desktop AI agent workspace"
 authors = ["Modexa"]
 license = ""

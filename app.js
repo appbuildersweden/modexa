@@ -4,19 +4,32 @@ import {
   signIn,
   signUp,
   signOut,
+  signInWithOAuth,
   onAuthChange,
   pullAll,
   db as cloudDb,
   describeError,
 } from "./cloud.js";
 import { isDesktopApp, checkDesktopUpdate, installDesktopUpdate } from "./updater.js";
+import { MODELS } from "./models.js";
+import { askModel, chatReady } from "./chat.js";
 
 /* Modexa — agent UI shell */
 
 /* Single source of truth for the signed-in user shown in the sidebar. */
+const PROFILE_KEY = "modexa.profile.name";
+
+function readStoredName() {
+  try {
+    return localStorage.getItem(PROFILE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
 const user = {
-  /* display name stays empty until real account data is connected */
-  name: "",
+  /* first name is stored when the account is created */
+  name: readStoredName(),
   handle: "jenst",
 };
 
@@ -135,6 +148,21 @@ const el = {
   cloudEmailLabel: document.getElementById("cloudEmailLabel"),
   cloudSignOutBtn: document.getElementById("cloudSignOutBtn"),
   cloudError: document.getElementById("cloudError"),
+  authGate: document.getElementById("authGate"),
+  gateForm: document.getElementById("gateForm"),
+  gateTitle: document.getElementById("gateTitle"),
+  gateSub: document.getElementById("gateSub"),
+  gateFirst: document.getElementById("gateFirst"),
+  gateLast: document.getElementById("gateLast"),
+  gateNameRow: document.getElementById("gateNameRow"),
+  gateEmail: document.getElementById("gateEmail"),
+  gatePassword: document.getElementById("gatePassword"),
+  gateError: document.getElementById("gateError"),
+  gateNote: document.getElementById("gateNote"),
+  gateSubmit: document.getElementById("gateSubmit"),
+  gateSocial: document.getElementById("gateSocial"),
+  gateSwitchText: document.getElementById("gateSwitchText"),
+  gateSwitchBtn: document.getElementById("gateSwitchBtn"),
   skillsSearch: document.getElementById("skillsSearch"),
   createSkillBtn: document.getElementById("createSkillBtn"),
   skillList: document.getElementById("skillList"),
@@ -157,9 +185,29 @@ const el = {
 };
 
 /* ---------------- identity ---------------- */
+function firstName(name) {
+  return (name || "").trim().split(/\s+/)[0] || "";
+}
+
+/* First letter of the first name; falls back to the local account name. */
+function avatarInitial() {
+  const source = firstName(user.name) || user.handle;
+  return source.charAt(0).toUpperCase();
+}
+
+function setProfileName(name) {
+  const clean = (name || "").replace(/\s+/g, " ").trim();
+  user.name = clean;
+  try {
+    if (clean) localStorage.setItem(PROFILE_KEY, clean);
+    else localStorage.removeItem(PROFILE_KEY);
+  } catch {}
+  renderUser();
+}
+
 function renderUser() {
-  const initial = user.handle.charAt(0).toUpperCase();
-  el.profileBtn.textContent = initial;
+  el.profileBtn.textContent = avatarInitial();
+  el.profileBtn.title = user.name ? `${user.name} — settings` : "Settings";
 }
 
 /* ---------------- sidebar ---------------- */
@@ -234,6 +282,7 @@ function renderMain() {
       node.innerHTML = `<div class="avatar"><img src="/logo/modexa-logo.png" alt="" /></div>
         <div class="body"><span class="who">Modexa</span><span class="text"></span></div>`;
       node.querySelector(".text").textContent = msg.text;
+      if (msg.streaming) node.classList.add("streaming");
     }
     el.thread.appendChild(node);
   }
@@ -294,17 +343,64 @@ function send(text) {
 
   startUsage();
 
-  /* placeholder until the agent backend is wired up */
-  window.setTimeout(() => {
-    const reply = "The interface is ready — the agent backend isn't connected yet. Once you add the model and tools, replies will stream in here.";
+  const model = selectedModel();
+  if (!chatReady || !model) {
+    const reply = chatReady
+      ? "Pick a model in the picker below the composer to send this."
+      : "The model proxy is not configured. Add VITE_PROXY_URL and VITE_PROXY_TOKEN to .env.";
     chat.messages.push({ role: "agent", text: reply });
-    cloudWrite("message", async (userId) => {
-      if (!chat.remoteId) return;
-      await cloudDb.addMessage(userId, chat.remoteId, { role: "agent", text: reply });
-    });
     renderMain();
     stopUsage();
-  }, 550);
+    return;
+  }
+
+  const pending = { role: "agent", text: "", streaming: true };
+  chat.messages.push(pending);
+  renderMain();
+
+  /* Repaint only the live bubble while tokens arrive, instead of the whole thread. */
+  let frame = 0;
+  const paintStream = () => {
+    if (state.view !== "chat" || state.activeChatId !== chat.id) return;
+    const bubbles = el.thread.querySelectorAll(".msg.agent");
+    const node = bubbles[bubbles.length - 1];
+    if (!node) return;
+    node.querySelector(".text").textContent = pending.text;
+    el.scroll.scrollTop = el.scroll.scrollHeight;
+  };
+
+  askModel({
+    modelId: model.id,
+    messages: chat.messages
+      .filter((message) => message !== pending)
+      .map((message) => ({ role: message.role, text: message.text })),
+    onDelta: (full) => {
+      pending.text = full;
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        paintStream();
+      });
+    },
+  })
+    .then((reply) => {
+      const text = reply.trim() || "The model returned an empty reply.";
+      pending.text = text;
+      delete pending.streaming;
+      cloudWrite("message", async (userId) => {
+        if (!chat.remoteId) return;
+        await cloudDb.addMessage(userId, chat.remoteId, { role: "agent", text });
+      });
+    })
+    .catch((error) => {
+      pending.text = `${model.name} could not answer: ${error.message}`;
+      delete pending.streaming;
+    })
+    .finally(() => {
+      if (frame) cancelAnimationFrame(frame);
+      renderMain();
+      stopUsage();
+    });
 }
 
 /* ---------------- composer ---------------- */
@@ -710,6 +806,7 @@ async function handleSignIn(event) {
   el.cloudStatus.textContent = "Signing in…";
   try {
     cloud.session = await signIn(email, password);
+    applySessionName(cloud.session);
     el.cloudPassword.value = "";
     renderCloud();
     await syncFromCloud();
@@ -719,60 +816,233 @@ async function handleSignIn(event) {
   }
 }
 
-async function handleSignUp() {
-  if (!cloudReady) return;
-  const email = el.cloudEmail.value.trim();
-  const password = el.cloudPassword.value;
-  if (!email || !password) {
-    setCloudError("Enter email and password.");
+/* ---------------- account gate ---------------- */
+const gate = { mode: "signup" };
+
+function setGateError(text) {
+  el.gateError.textContent = text || "";
+  el.gateError.hidden = !text;
+}
+
+function setGateNote(text) {
+  el.gateNote.textContent = text || "";
+  el.gateNote.hidden = !text;
+}
+
+function setGateMode(mode) {
+  gate.mode = mode;
+  const signup = mode === "signup";
+
+  el.gateTitle.textContent = signup ? "Create your account" : "Welcome back";
+  el.gateSub.textContent = signup
+    ? "Chats, projects and skills follow you between devices. Sign up to start."
+    : "Sign in to pick up your chats, projects and skills.";
+  el.gateNameRow.hidden = !signup;
+  el.gateSubmit.textContent = signup ? "Create account" : "Sign in";
+  el.gateSwitchText.textContent = signup ? "Already have an account?" : "New to Modexa?";
+  el.gateSwitchBtn.textContent = signup ? "Sign in" : "Create account";
+  el.gatePassword.placeholder = signup ? "At least 8 characters, letters and numbers" : "Password";
+  el.gatePassword.autocomplete = signup ? "new-password" : "current-password";
+  setGateError("");
+  setGateNote("");
+}
+
+const DESKTOP_SOCIAL_NOTE =
+  "Social sign-in needs a browser. Use your email here in the desktop app.";
+
+function openGate(mode = "signup") {
+  setGateMode(mode);
+  el.authGate.hidden = false;
+  if (isDesktopApp()) setGateNote(DESKTOP_SOCIAL_NOTE);
+  (mode === "signup" ? el.gateFirst : el.gateEmail).focus();
+}
+
+function closeGate() {
+  el.authGate.hidden = true;
+  setGateError("");
+  setGateNote("");
+}
+
+/* Password rules checked before anything is sent to Supabase. */
+function passwordProblem(password) {
+  if (password.length < 8) return "Use at least 8 characters.";
+  if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) return "Use both letters and numbers.";
+  return "";
+}
+
+async function handleGateSubmit(event) {
+  event.preventDefault();
+  const signup = gate.mode === "signup";
+  const email = el.gateEmail.value.trim();
+  const password = el.gatePassword.value;
+
+  setGateError("");
+  setGateNote("");
+
+  if (!cloudReady) {
+    setGateError("Supabase is not configured in .env");
     return;
   }
 
-  setCloudError("");
-  el.cloudStatus.textContent = "Creating account…";
+  let first = "";
+  let last = "";
+  if (signup) {
+    first = el.gateFirst.value.trim();
+    last = el.gateLast.value.trim();
+    if (!first) {
+      setGateError("Enter your first name.");
+      el.gateFirst.focus();
+      return;
+    }
+    if (!last) {
+      setGateError("Enter your last name.");
+      el.gateLast.focus();
+      return;
+    }
+  }
+
+  if (!email) {
+    setGateError("Enter your email address.");
+    el.gateEmail.focus();
+    return;
+  }
+
+  if (signup) {
+    const problem = passwordProblem(password);
+    if (problem) {
+      setGateError(problem);
+      el.gatePassword.focus();
+      return;
+    }
+  } else if (!password) {
+    setGateError("Enter your password.");
+    el.gatePassword.focus();
+    return;
+  }
+
+  const fullName = (first + " " + last).trim();
+  el.gateSubmit.disabled = true;
+  el.gateSubmit.textContent = signup ? "Creating account…" : "Signing in…";
+
   try {
-    cloud.session = await signUp(email, password);
-    el.cloudPassword.value = "";
-    renderCloud();
+    if (signup) {
+      cloud.session = await signUp(email, password, fullName);
+      setProfileName(fullName);
+    } else {
+      cloud.session = await signIn(email, password);
+      applySessionName(cloud.session);
+    }
+
+    el.cloudEmail.value = email;
+    el.gatePassword.value = "";
+
     if (cloud.session) {
+      closeGate();
+      el.cloudStatus.textContent = "Connected to Supabase";
+      renderCloud();
       await syncFromCloud();
     } else {
-      el.cloudStatus.textContent = "Check your inbox to confirm the account";
+      setGateMode("signin");
+      el.gateEmail.value = email;
+      setGateNote("Account created — check your inbox to confirm, then sign in.");
     }
   } catch (error) {
-    setCloudError(describeError(error));
-    renderCloud();
+    setGateError(describeError(error));
+  } finally {
+    el.gateSubmit.disabled = false;
+    el.gateSubmit.textContent = gate.mode === "signup" ? "Create account" : "Sign in";
   }
+}
+
+async function handleOAuth(provider) {
+  setGateError("");
+  setGateNote("");
+
+  if (!cloudReady) {
+    setGateError("Supabase is not configured in .env");
+    return;
+  }
+
+  try {
+    await signInWithOAuth(provider);
+  } catch (error) {
+    const message = describeError(error);
+    setGateError(
+      /provider is not enabled/i.test(message)
+        ? (provider === "apple" ? "Apple" : "Google") + " sign-in is not enabled for this project yet."
+        : message,
+    );
+  }
+}
+
+/* Name saved when the account was created, otherwise the name on the account. */
+function applySessionName(session) {
+  const meta = (session && session.user && session.user.user_metadata) || {};
+  const name = meta.full_name || meta.name || "";
+  if (name) setProfileName(name);
 }
 
 async function initCloud() {
   renderCloud();
-  if (!cloudReady) return;
+
+  if (!cloudReady) {
+    openGate("signup");
+    setGateError("Supabase is not configured in .env");
+    return;
+  }
 
   try {
     cloud.session = await getSession();
-    if (cloud.session) await syncFromCloud();
+    if (cloud.session) {
+      applySessionName(cloud.session);
+      await syncFromCloud();
+    }
   } catch (error) {
     setCloudError(describeError(error));
   }
   renderCloud();
 
+  if (!cloud.session) openGate("signup");
+
   onAuthChange(async (session) => {
     const hadSession = Boolean(cloud.session);
     cloud.session = session;
+    if (session) {
+      applySessionName(session);
+      closeGate();
+    }
     renderCloud();
     if (session && !hadSession) await syncFromCloud();
   });
 }
 
 el.cloudForm.addEventListener("submit", handleSignIn);
-el.cloudSignUpBtn.addEventListener("click", handleSignUp);
+el.cloudSignUpBtn.addEventListener("click", () => openGate("signup"));
+el.gateForm.addEventListener("submit", handleGateSubmit);
+el.gateSwitchBtn.addEventListener("click", () => {
+  setGateMode(gate.mode === "signup" ? "signin" : "signup");
+  (gate.mode === "signup" ? el.gateFirst : el.gateEmail).focus();
+});
+for (const button of el.gateSocial.querySelectorAll("[data-provider]")) {
+  button.addEventListener("click", () => handleOAuth(button.dataset.provider));
+}
+
+/* Social sign-in needs a browser callback, so it stays email-only in the desktop shell. */
+if (isDesktopApp()) {
+  for (const button of el.gateSocial.querySelectorAll("[data-provider]")) {
+    button.disabled = true;
+    button.title = "Google and Apple sign-in complete in a browser. Use your email in the desktop app.";
+  }
+
+}
+
 el.cloudSignOutBtn.addEventListener("click", async () => {
   try {
     await signOut();
     cloud.session = null;
     setCloudError("");
     renderCloud();
+    openGate("signin");
   } catch (error) {
     setCloudError(describeError(error));
   }
@@ -1447,6 +1717,10 @@ renderChats();
 loadMcp();
 renderMcp();
 renderModePills();
+state.models = MODELS;
+if (!state.modelPicker.selectedId) {
+  state.modelPicker.selectedId = (MODELS.find((model) => model.recommended) || MODELS[0] || {}).id || null;
+}
 loadUsage();
 renderModelMenu();
 renderMain();

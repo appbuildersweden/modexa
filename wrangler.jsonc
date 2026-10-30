@@ -1,0 +1,17 @@
+{
+  // Deploy the download site to your own Cloudflare account:
+  //   npx wrangler deploy
+  // The same files are also published through Freebuff Sites.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "modexa-site",
+  "main": "deploy/worker.js",
+  "compatibility_date": "2026-10-30",
+  "assets": {
+    "directory": "./site",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

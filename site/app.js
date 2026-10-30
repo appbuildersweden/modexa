@@ -15,7 +15,19 @@ const els = {
   heroMeta: document.getElementById("heroMeta"),
   year: document.getElementById("year"),
   heroDownload: document.getElementById("heroDownload"),
+  windowVersion: document.getElementById("windowVersion"),
+  aboutVersion: document.getElementById("aboutVersion"),
+  aboutSize: document.getElementById("aboutSize"),
 };
+
+/** Markerar headern när sidan scrollats, så den får en mjuk skugga. */
+const header = document.getElementById("siteHeader");
+function onScroll() {
+  if (!header) return;
+  header.classList.toggle("is-scrolled", window.scrollY > 12);
+}
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
 
 function formatSize(bytes) {
   if (!bytes) return "";
@@ -66,6 +78,9 @@ function showNoRelease() {
   els.badge.textContent = "First release is on its way";
   els.latestVersion.textContent = "Not published yet";
   els.latestDate.textContent = "—";
+  if (els.windowVersion) els.windowVersion.textContent = "dev";
+  if (els.aboutVersion) els.aboutVersion.textContent = "Not published yet";
+
   els.downloadNote.innerHTML =
     'Installers are built by GitHub Actions. Follow <a href="https://github.com/appbuildersweden/modexa" target="_blank" rel="noreferrer">the repository</a> to see the first build land.';
 
@@ -97,6 +112,10 @@ function applyRelease(release) {
     els.heroMeta.textContent = `Windows installer · ${formatSize(windows.size)} · macOS and Linux on GitHub`;
   }
 
+  if (els.windowVersion) els.windowVersion.textContent = version || "—";
+  if (els.aboutVersion) els.aboutVersion.textContent = version ? `Modexa ${version.replace(/^v/, "")}` : "Latest build";
+  if (els.aboutSize) els.aboutSize.textContent = windows ? `${formatSize(windows.size)} for Windows` : "installer size";
+
   els.downloadNote.textContent = version
     ? `Downloads come from release ${version}. Older builds live on GitHub.`
     : "Downloads come from the latest GitHub release.";
@@ -117,6 +136,7 @@ async function loadLatestRelease() {
     applyRelease(await response.json());
   } catch (error) {
     els.badge.textContent = "Release info unavailable";
+    if (els.windowVersion) els.windowVersion.textContent = "—";
     els.downloadNote.textContent =
       "Couldn't reach GitHub right now — the download buttons still open the releases page.";
   }

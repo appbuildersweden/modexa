@@ -7,7 +7,13 @@ export const cloudReady = Boolean(url && key);
 
 export const supabase = cloudReady
   ? createClient(url, key, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        /* PKCE keeps the OAuth code verifier in this client instead of the URL. */
+        flowType: "pkce",
+      },
     })
   : null;
 
@@ -37,10 +43,41 @@ export async function signIn(email, password) {
   return data.session;
 }
 
-export async function signUp(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+export async function signUp(email, password, fullName) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: fullName ? { data: { full_name: fullName } } : undefined,
+  });
   if (error) throw error;
   return data.session;
+}
+
+export async function signInWithOAuth(provider) {
+  const redirectTo = `${window.location.origin}${window.location.pathname}`;
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo,
+      /* Navigate ourselves, after checking that the provider is actually enabled. */
+      skipBrowserRedirect: true,
+      queryParams: provider === "google" ? { prompt: "select_account" } : undefined,
+    },
+  });
+  if (error) throw error;
+
+  try {
+    const probe = await fetch(data.url, { redirect: "manual" });
+    if ((probe.headers.get("content-type") || "").includes("application/json")) {
+      const body = await probe.text();
+      if (/provider is not enabled/i.test(body)) throw new Error("Provider is not enabled");
+    }
+  } catch (probeError) {
+    if (probeError.message === "Provider is not enabled") throw probeError;
+    /* Network trouble while probing is fine – let the real redirect try. */
+  }
+
+  window.location.assign(data.url);
 }
 
 export async function signOut() {

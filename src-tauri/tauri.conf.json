@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Modexa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "com.modexa.app",
   "build": {
     "frontendDist": "../dist",
@@ -23,7 +23,9 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://*.supabase.co wss://*.supabase.co https://modexa-proxy.hoby123456-123.workers.dev https://api.github.com https://github.com https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'",
+      "freezePrototype": false,
+      "assetProtocol": { "enable": false }
     }
   },
   "bundle": {

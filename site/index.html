@@ -6,13 +6,20 @@
   <title>Modexa — your AI agent workspace</title>
   <meta
     name="description"
-    content="Modexa is a fast desktop workspace for AI agents: chats, projects, skills and MCP servers in one window. Downloads and updates straight from GitHub."
+    content="Modexa is a fast desktop workspace for AI agents: chats, projects, skills and MCP servers in one window. Downloads and signed updates straight from GitHub."
   />
+  <meta name="theme-color" content="#171816" />
+  <meta property="og:title" content="Modexa — your AI agent workspace" />
+  <meta property="og:description" content="Chats, projects, skills and MCP servers in one fast desktop app for Windows, macOS and Linux." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/app-chat.png" />
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header" id="siteHeader">
     <div class="wrap header-inner">
       <a class="brand" href="#top">
         <img src="assets/logo.png" alt="" width="26" height="26" />
@@ -21,6 +28,7 @@
 
       <nav class="nav" aria-label="Main">
         <a href="#features">Features</a>
+        <a href="#about">About</a>
         <a href="#download">Download</a>
         <a href="#updates">Updates</a>
         <a class="nav-link" href="https://github.com/appbuildersweden/modexa" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -30,9 +38,9 @@
     </div>
   </header>
 
-  <main id="top">
-    <section class="hero">
-      <div class="glow" aria-hidden="true"></div>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-bg" aria-hidden="true"></div>
       <div class="wrap">
         <p class="badge">
           <span class="dot" aria-hidden="true"></span>
@@ -59,9 +67,21 @@
 
         <p class="meta" id="heroMeta">Windows · macOS · Linux</p>
 
-        <figure class="shot">
-          <img src="assets/app-chat.png" alt="Modexa workspace with the sidebar, chat composer and model picker" width="1400" height="900" />
+        <figure class="window">
+          <div class="window-bar">
+            <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="window-title">Modexa</span>
+            <span class="window-pill" id="windowVersion">—</span>
+          </div>
+          <img src="assets/app-chat.png" alt="Modexa workspace with the sidebar, chat composer and model picker" width="1400" height="787" />
         </figure>
+
+        <ul class="stats">
+          <li><strong>21 h</strong><span>daily model time</span></li>
+          <li><strong>3</strong><span>themes</span></li>
+          <li><strong>MCP</strong><span>servers, reviewed</span></li>
+          <li><strong>Tauri 2</strong><span>native shell</span></li>
+        </ul>
       </div>
     </section>
 
@@ -69,11 +89,12 @@
       <div class="wrap">
         <p class="eyebrow">Features</p>
         <h2>Everything the agent needs, in one window</h2>
+        <p class="section-sub">No browser tabs, no scattered terminals. Modexa keeps the work in one place and remembers it between launches.</p>
 
         <div class="grid">
           <article class="card">
             <span class="card-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-8 8H5l1.6-3A8 8 0 1 1 20 12Z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.6a8.3 8.3 0 0 1-8.9 8.3 9.4 9.4 0 0 1-3.6-.8L4.5 20.8l1.5-3.9A8.2 8.2 0 0 1 4.5 11.6 8.4 8.4 0 0 1 12.8 3.2 8.3 8.3 0 0 1 21 11.6Z"/></svg>
             </span>
             <h3>Chats and projects</h3>
             <p>Keep threads organised per project, switch scope in one click, and reopen any conversation from the sidebar.</p>
@@ -137,9 +158,94 @@
             <li>Free models that cost nothing</li>
           </ul>
         </div>
-        <figure class="shot inset">
-          <img src="assets/app-models.png" alt="Modexa model picker with speed tiers, daily usage and quality levels" width="1400" height="900" loading="lazy" />
+        <figure class="window inset">
+          <div class="window-bar">
+            <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="window-title">Model picker</span>
+          </div>
+          <img src="assets/app-models.png" alt="Modexa model picker with speed tiers, daily usage and quality levels" width="1400" height="787" loading="lazy" />
         </figure>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="wrap">
+        <p class="eyebrow">About the app</p>
+        <h2>A small, focused desktop app</h2>
+        <p class="section-sub">
+          Modexa is a native shell built with Tauri 2 around a hand-written interface — no browser
+          runtime in between, no account required to start, and nothing hidden in the background.
+        </p>
+
+        <div class="about-grid">
+          <article class="about-card">
+            <h3>What it is</h3>
+            <p>
+              A workspace for AI agents: conversations, projects, reusable skills, MCP servers and
+              model selection. The interface is plain HTML, CSS and JavaScript running inside the
+              Tauri window.
+            </p>
+          </article>
+
+          <article class="about-card">
+            <h3>Requirements</h3>
+            <ul>
+              <li>Windows 10 or newer (WebView2)</li>
+              <li>macOS 11 or newer, Linux with WebKitGTK</li>
+              <li>No runtime or Node.js install needed</li>
+            </ul>
+          </article>
+
+          <article class="about-card">
+            <h3>Where data lives</h3>
+            <p>
+              Settings, themes and MCP servers are stored locally. Signing in with a cloud account
+              syncs chats, projects, skills and daily usage to Supabase, protected per user.
+            </p>
+          </article>
+
+          <article class="about-card">
+            <h3>Version &amp; updates</h3>
+            <p>
+              <span id="aboutVersion">Latest build</span> · <span id="aboutSize">installer size</span>.
+              Updates are signed and delivered through GitHub Releases; the app checks on start and
+              from Settings → Updates.
+            </p>
+          </article>
+        </div>
+
+        <div class="faq">
+          <details>
+            <summary>What do the model multipliers mean?</summary>
+            <p>
+              Every account has 21 hours of daily model time. A model marked 10× spends ten minutes
+              of that time for each real minute it runs — a free model spends nothing. The meter in
+              the picker shows what is left, live.
+            </p>
+          </details>
+          <details>
+            <summary>Do I need a server for Modexa?</summary>
+            <p>
+              No. The app runs on your machine and everything local works offline. A Supabase
+              project is only needed if you want your chats and projects synced between devices.
+            </p>
+          </details>
+          <details>
+            <summary>How are MCP servers approved?</summary>
+            <p>
+              Paste the <code>mcpServers</code> block from the server's instructions, review the entry
+              and approve it. Nothing runs until you have approved it, and you can revisit the
+              choice from Settings → MCP at any time.
+            </p>
+          </details>
+          <details>
+            <summary>Which platforms are supported?</summary>
+            <p>
+              Windows installers are published today. macOS and Linux are built by the same GitHub
+              Action and appear on the releases page as soon as a release runs on those runners.
+            </p>
+          </details>
+        </div>
       </div>
     </section>
 
@@ -159,6 +265,7 @@
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.6l7.2-1v7.1H3V5.6Zm0 12.8l7.2 1v-7H3v6Zm8.2 1.2L21 21V12.6h-9.8V19.6Zm0-14.3v7.1H21V3l-9.8 2.3Z"/></svg>
               </span>
               <h3>Windows</h3>
+              <span class="tag">Recommended</span>
             </div>
             <p class="platform-file" data-file="windows">Installer · 64-bit</p>
             <a class="btn btn-card" data-asset="windows" href="https://github.com/appbuildersweden/modexa/releases">Download</a>
@@ -203,6 +310,7 @@
               Modexa checks GitHub for a signed release when it starts, and again from
               Updates in settings. Installing takes one click — no uninstall, no manual download.
             </p>
+            <a class="btn btn-ghost btn-sm" href="https://github.com/appbuildersweden/modexa/releases" target="_blank" rel="noreferrer">Release history ↗</a>
           </div>
 
           <dl class="facts">
