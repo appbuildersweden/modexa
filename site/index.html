@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modexa — your AI agent workspace</title>
+  <meta
+    name="description"
+    content="Modexa is a fast desktop workspace for AI agents: chats, projects, skills and MCP servers in one window. Downloads and updates straight from GitHub."
+  />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top">
+        <img src="assets/logo.png" alt="" width="26" height="26" />
+        <span>MODΞXA</span>
+      </a>
+
+      <nav class="nav" aria-label="Main">
+        <a href="#features">Features</a>
+        <a href="#download">Download</a>
+        <a href="#updates">Updates</a>
+        <a class="nav-link" href="https://github.com/appbuildersweden/modexa" target="_blank" rel="noreferrer">GitHub ↗</a>
+      </nav>
+
+      <a class="btn btn-primary btn-sm" href="#download">Download</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="badge">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="versionBadge">Loading latest release…</span>
+        </p>
+
+        <h1>Your AI agent<br /><em>workspace</em></h1>
+
+        <p class="lede">
+          Chats, projects, skills and MCP servers in one fast desktop app. Pick your model,
+          keep an eye on your daily time, and let every update arrive by itself.
+        </p>
+
+        <div class="cta">
+          <a class="btn btn-primary" id="heroDownload" href="#download">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v10"/><path d="m7.5 10 4.5 4 4.5-4"/><path d="M5 19h14"/></svg>
+            Download for Windows
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/appbuildersweden/modexa" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.7.3-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5a3.9 3.9 0 0 1 1-2.7 3.6 3.6 0 0 1 .1-2.6s.9-.3 3 1.1a10 10 0 0 1 5.2 0c2.1-1.4 3-1.1 3-1.1a3.6 3.6 0 0 1 .1 2.6 3.9 3.9 0 0 1 1 2.7c0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+
+        <p class="meta" id="heroMeta">Windows · macOS · Linux</p>
+
+        <figure class="shot">
+          <img src="assets/app-chat.png" alt="Modexa workspace with the sidebar, chat composer and model picker" width="1400" height="900" />
+        </figure>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="wrap">
+        <p class="eyebrow">Features</p>
+        <h2>Everything the agent needs, in one window</h2>
+
+        <div class="grid">
+          <article class="card">
+            <span class="card-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-8 8H5l1.6-3A8 8 0 1 1 20 12Z"/></svg>
+            </span>
+            <h3>Chats and projects</h3>
+            <p>Keep threads organised per project, switch scope in one click, and reopen any conversation from the sidebar.</p>
+          </article>
+
+          <article class="card">
+            <span class="card-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+            </span>
+            <h3>21 hours a day</h3>
+            <p>Every model has a cost multiplier. A 10× model spends ten minutes of daily time for each real minute — free models spend nothing.</p>
+          </article>
+
+          <article class="card">
+            <span class="card-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h13"/></svg>
+            </span>
+            <h3>Skills that stay</h3>
+            <p>Write your own skills with instructions, save them, and reuse them in any project without retyping the prompt.</p>
+          </article>
+
+          <article class="card">
+            <span class="card-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="m7.5 9.5 2.6 2.5-2.6 2.5"/><path d="M12.8 14.5h3.7"/></svg>
+            </span>
+            <h3>MCP servers</h3>
+            <p>Paste an <code>mcpServers</code> block, review it, and approve what runs. Nothing starts until you say so.</p>
+          </article>
+
+          <article class="card">
+            <span class="card-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>
+            </span>
+            <h3>Three themes</h3>
+            <p>Dark, Light and OG Shine with a turquoise accent. The choice is remembered between launches.</p>
+          </article>
+
+          <article class="card">
+            <span class="card-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.6"/><path d="M20 4.5V11h-6.5"/></svg>
+            </span>
+            <h3>Updates from GitHub</h3>
+            <p>Signed releases are built by GitHub Actions. The app notices a new version on start and installs it in place.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap split">
+        <div class="split-copy">
+          <p class="eyebrow">Model picker</p>
+          <h2>Pick a model, see the cost</h2>
+          <p class="section-sub">
+            The picker shows speed tiers, today's remaining time and what each model draws before you start.
+            When the 21 hours are gone, usage stops until the next day.
+          </p>
+          <ul class="ticks">
+            <li>Fast, Balanced and Powerful tiers</li>
+            <li>Daily meter with live remaining time</li>
+            <li>Free models that cost nothing</li>
+          </ul>
+        </div>
+        <figure class="shot inset">
+          <img src="assets/app-models.png" alt="Modexa model picker with speed tiers, daily usage and quality levels" width="1400" height="900" loading="lazy" />
+        </figure>
+      </div>
+    </section>
+
+    <section id="download" class="section">
+      <div class="wrap">
+        <p class="eyebrow">Download</p>
+        <h2>Get Modexa</h2>
+        <p class="section-sub" id="downloadLead">
+          Every installer is built and published automatically from
+          <a href="https://github.com/appbuildersweden/modexa/releases" target="_blank" rel="noreferrer">GitHub Releases</a>.
+        </p>
+
+        <div class="platforms">
+          <article class="platform" data-platform="windows">
+            <div class="platform-head">
+              <span class="platform-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.6l7.2-1v7.1H3V5.6Zm0 12.8l7.2 1v-7H3v6Zm8.2 1.2L21 21V12.6h-9.8V19.6Zm0-14.3v7.1H21V3l-9.8 2.3Z"/></svg>
+              </span>
+              <h3>Windows</h3>
+            </div>
+            <p class="platform-file" data-file="windows">Installer · 64-bit</p>
+            <a class="btn btn-card" data-asset="windows" href="https://github.com/appbuildersweden/modexa/releases">Download</a>
+          </article>
+
+          <article class="platform" data-platform="macos">
+            <div class="platform-head">
+              <span class="platform-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2.4 2-3.6 2.1-3.6-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.6.9-.8 0-1.9-.9-3.1-.9-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.6.8 1.2 1.7 2.5 3 2.4 1.2 0 1.6-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.6-1-2.6-3.7ZM14 5.4c.6-.8 1.1-1.9 1-3-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.9-1.4Z"/></svg>
+              </span>
+              <h3>macOS</h3>
+            </div>
+            <p class="platform-file" data-file="macos">Universal · .dmg</p>
+            <a class="btn btn-card" data-asset="macos" href="https://github.com/appbuildersweden/modexa/releases">Download</a>
+          </article>
+
+          <article class="platform" data-platform="linux">
+            <div class="platform-head">
+              <span class="platform-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-2 0-3.2 1.6-3.2 3.8 0 1.6-.4 2.4-1.3 4.2-.9 1.9-1.6 3.3-1.6 4.7 0 1.2.7 2 1.7 2 .8 0 1.2-.4 1.9-.4s1 .4 1.9.4h1.2c.9 0 1.2-.4 1.9-.4s1.1.4 1.9.4c1 0 1.7-.8 1.7-2 0-1.4-.7-2.8-1.6-4.7-.9-1.8-1.3-2.6-1.3-4.2C15.2 4.6 14 3 12 3Z"/><path d="M10.4 6.8h.01M13.6 6.8h.01"/></svg>
+              </span>
+              <h3>Linux</h3>
+            </div>
+            <p class="platform-file" data-file="linux">AppImage · .deb</p>
+            <a class="btn btn-card" data-asset="linux" href="https://github.com/appbuildersweden/modexa/releases">Download</a>
+          </article>
+        </div>
+
+        <p class="download-note" id="downloadNote">
+          Builds appear here as soon as the first GitHub release is published.
+        </p>
+      </div>
+    </section>
+
+    <section id="updates" class="section">
+      <div class="wrap">
+        <div class="updates">
+          <div class="updates-copy">
+            <p class="eyebrow">Auto-update</p>
+            <h2>Always the newest build</h2>
+            <p class="section-sub">
+              Modexa checks GitHub for a signed release when it starts, and again from
+              Updates in settings. Installing takes one click — no uninstall, no manual download.
+            </p>
+          </div>
+
+          <dl class="facts">
+            <div><dt>Channel</dt><dd>GitHub Releases</dd></div>
+            <div><dt>Latest</dt><dd id="latestVersion">—</dd></div>
+            <div><dt>Published</dt><dd id="latestDate">—</dd></div>
+            <div><dt>Runtime</dt><dd>Tauri 2</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a class="brand" href="#top">
+        <img src="assets/logo.png" alt="" width="22" height="22" />
+        <span>MODΞXA</span>
+      </a>
+      <p>© <span id="year">2026</span> Modexa · Built with Tauri, hosted on Cloudflare</p>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="https://github.com/appbuildersweden/modexa" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/appbuildersweden/modexa/releases" target="_blank" rel="noreferrer">Releases</a>
+        <a href="#download">Download</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

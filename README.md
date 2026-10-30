@@ -58,3 +58,9 @@ Hemligheter som måste finnas i GitHub → Settings → Secrets and variables �
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | publik nyckel |
 
 Tappa aldrig bort den privata nyckeln – utan den kan inga uppdateringar signeras.
+
+## Nedladdningssida
+
+[site/](site/) är den publika sidan (logga, funktioner, nedladdning) och [deploy/](deploy/)
+är Worker-manifestet som publicerar den. Sidan hämtar `releases/latest` från GitHub när den
+laddas, så version, datum och nedladdningslänkar uppdateras av sig själva vid varje release.
